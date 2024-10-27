@@ -29,18 +29,9 @@ func main() {
 
 	greetUser()
 
-	// For Loop
-	// for true {} -> Infinite loop
-	// for {} -> Infinite loop
-	// for (remainingTickets > 0 && len(bookings) < 50){} -> conditional loop
-
-	// for {
 	firstName, lastName, emailId, userTickets := getUserInput()
 
 	isValidName, isValidEmail, isValidTicketNumber := helper.ValidateUserInput(firstName, lastName, emailId, userTickets, remainingTickets)
-
-	// isInvalidCity := city != "Singapore" || city != "London"
-	// isValidCity := city == "Singapore" || city == "London"
 
 	if isValidName && isValidEmail && isValidTicketNumber {
 		bookTicket(userTickets, firstName, lastName, emailId)

@@ -68,6 +68,8 @@ go 1.23.2
 
 > Packages are the most powerful part of the Go language. The <u>**_purpose of a package is to design and maintain a large number of programs by grouping related features together into single units_**</u> so that they can be easy to maintain and understand and independent of the other package programs.
 
+> A Package is a collection of Go source files that reside in the same directory and have the same package declaration at the top.
+
 ```go
 // Import one package
 import "fmt"
@@ -201,9 +203,20 @@ var users := make([]map[string])
 - In maps, you can only add value when the map is initialized if you try to add value in the uninitialized map, then the compiler will throw an error.
 </details>
 
-## Structs
+## Struct
 
 A `structure` or `struct` in Golang is a user-defined type that **_allows to group/combine items of possibly different types into a single type_**. Any real-world entity which has some set of properties/fields can be represented as a struct. This concept is generally compared with the classes in object-oriented programming.
+
+```go
+// We have defined a custom data type
+type UserData struct {
+	firstName   string
+	lastName    string
+	emailId     string
+	noOfTickets uint
+    isStudent   bool
+}
+```
 
 ## Functions
 
@@ -239,6 +252,23 @@ func main(){
     name, age := userDetails()
 }
 ```
+
+## Pointers in Go
+
+Pointers in Golang is <u>**_a variable that is used to store the memory address of another variable_**</u>
+
+```go
+var x int = 100
+var y *int = &x
+
+// x -> 0x0201 -> 100
+// y -> 0x0206 -> 0x0201 -> 100
+// *y -> 0x0201 -> 100
+// x == *y -> true
+// &x == y -> true
+```
+
+![alt text](/assets/image.png)
 
 ## Package Level Variable
 
@@ -428,7 +458,7 @@ switch city:="London"; city{
 ## Import and Export Variables and Functions in Go
 
 - Export a function or variable from a package so that it will be available for all packages
-- Make capitalize first letter
+- Make `capitalize` first letter
 
 ## Scope of packages
 
@@ -438,7 +468,7 @@ switch city:="London"; city{
 
 ## Scope rules in GoLang
 
-Scope is the region of program, where a defined variable and function can be accessed.
+`Scope` is the **_region of program, where a defined variable and function can be accessed_**.
 
 ### Local
 
@@ -463,9 +493,49 @@ Scope is the region of program, where a defined variable and function can be acc
 
 ## Concurency in `go`
 
+### What Is Concurrency?
+
+“<u>Concurrency is about dealing with lots of things at once. Parallelism is about doing lots of things at once.</u>” — Rob Pike
+
+> A `goroutine` is a function that is capable of running `concurrently` with other functions. To create a goroutine we use the keyword go followed by a function invocation:
+
+```go
+package main
+
+import "fmt"
+
+func f(n int) {
+  for i := 0; i < 10; i++ {
+    fmt.Println(n, ":", i)
+  }
+}
+
+func main() {
+  go f(0)
+  var input string
+  fmt.Scanln(&input)
+}
+```
+
+**This program consists of two goroutines**. <u>The first goroutine is implicit and is the main function</u> itself. <u>The second goroutine is created when we call go f(0)</u>. _Normally when we invoke a function our program will execute all the statements in a function and then return to the next line following the invocation. With a goroutine we return immediately to the next line and don't wait for the function to complete. This is why the call to the `Scanln` function has been included; without it the program would exit before being given the opportunity to print all the numbers._
+
+Goroutines are lightweight and we can easily create thousands of them. We can modify our program to run 10 goroutines by doing this:
+
+```go
+func main() {
+  for i := 0; i < 10; i++ {
+    go f(i)
+  }
+  var input string
+  fmt.Scanln(&input)
+}
+```
+
+> Read more about concurrency in `go`: [🔗Link](https://www.golang-book.com/books/intro/10)
+
 ## Goroutine
 
-<u>A goroutine is an independent function that executes simultaneously in some separate lightweight threads managed by Go</u>. GoLang provides it to support concurrency in Go.
+<u>_A goroutine is an independent function that executes simultaneously in some separate lightweight threads managed by Go_</u>. GoLang provides it to support concurrency in Go.
 
 - Go is using, what's called a `green thread`
 - **Abstraction** of an actual thread
@@ -504,6 +574,47 @@ func goodbye() {
 > Congratulation! 🔥🔥🔥 If you have read the entire docs carefully then you are good to start with go programming language.
 
 If you like this docs then follow me on these platform to get more contents on `Web Development` and `Coding`.
+
+## WaitGroups
+
+To wait for multiple goroutines to finish, we can use a wait group.
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+    "time"
+)
+
+// Crate a waitGroup
+var wg sync.WaitGroup
+
+// This function will take 5 seconds to complete
+func sendEmail() {
+    time.Sleep(5 * time.Second)
+
+    // reduce the waitlist once function has complete its execution
+    defer wg.Done()
+}
+
+func main() {
+    for i := 1; i <= 5; i++ {
+        // Increment the waitlist
+        wg.Add(1)
+        // goroutine
+        go sendEmail()
+    }
+
+    // wait for all the waitlist to be empty
+    wg.Wait()
+}
+```
+
+```
+create a waitlist -> increment list -> reduce list -> wait for empty
+```
 
 ### Connect with me
 
